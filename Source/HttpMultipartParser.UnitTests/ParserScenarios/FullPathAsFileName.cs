@@ -36,9 +36,14 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 		[Fact]
 		public void HandlesFullPathAsFileNameWithSemicolonCorrectly()
 		{
+			var options = new ParserOptions
+			{
+				Encoding = Encoding.UTF8
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				var parser = MultipartFormDataParser.Parse(stream, Encoding.UTF8);
+				var parser = MultipartFormDataParser.Parse(stream, options);
 				Assert.True(_testCase.Validate(parser));
 			}
 		}
@@ -46,9 +51,14 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 		[Fact]
 		public async Task HandlesFullPathAsFileNameWithSemicolonCorrectlyAsync()
 		{
+			var options = new ParserOptions
+			{
+				Encoding = Encoding.UTF8
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				var parser = await MultipartFormDataParser.ParseAsync(stream, Encoding.UTF8).ConfigureAwait(false);
+				var parser = await MultipartFormDataParser.ParseAsync(stream, options).ConfigureAwait(false);
 				Assert.True(_testCase.Validate(parser));
 			}
 		}

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -34,7 +35,7 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 			// The default behavior is to throw an exception when the form contains an invalid section.
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				Assert.Throws<MultipartParseException>(() => MultipartFormDataParser.Parse(stream));
+				Assert.Throws<MultipartParseException>(() => MultipartFormDataParser.Parse(stream, null));
 			}
 		}
 
@@ -44,16 +45,21 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 			// The default behavior is to throw an exception when the form contains an invalid section.
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				await Assert.ThrowsAsync<MultipartParseException>(() => MultipartFormDataParser.ParseAsync(stream)).ConfigureAwait(false);
+				await Assert.ThrowsAsync<MultipartParseException>(() => MultipartFormDataParser.ParseAsync(stream, null, CancellationToken.None)).ConfigureAwait(false);
 			}
 		}
 
 		[Fact]
 		public void Invalid_part_is_ignored()
 		{
+			var options = new ParserOptions
+			{
+				IgnoreInvalidParts = true
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				var parser = MultipartFormDataParser.Parse(stream, ignoreInvalidParts: true);
+				var parser = MultipartFormDataParser.Parse(stream, options);
 				Assert.Equal(0, parser.Files.Count);
 				Assert.Equal(0, parser.Parameters.Count);
 			}
@@ -62,9 +68,14 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 		[Fact]
 		public async Task Invalid_part_is_ignored_async()
 		{
+			var options = new ParserOptions
+			{
+				IgnoreInvalidParts = true
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				var parser = await MultipartFormDataParser.ParseAsync(stream, ignoreInvalidParts: true).ConfigureAwait(false);
+				var parser = await MultipartFormDataParser.ParseAsync(stream, options).ConfigureAwait(false);
 				Assert.Equal(0, parser.Files.Count);
 				Assert.Equal(0, parser.Parameters.Count);
 			}

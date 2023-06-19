@@ -52,9 +52,16 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 		[Fact]
 		public void MjpegStreamTest()
 		{
+			var options = new ParserOptions
+			{
+				Boundary = "MOBOTIX_Fast_Serverpush",
+				BinaryBufferSize = 32,
+				Encoding = Encoding.UTF8
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				var parser = MultipartFormDataParser.Parse(stream, "MOBOTIX_Fast_Serverpush", Encoding.UTF8, 32);
+				var parser = MultipartFormDataParser.Parse(stream, options);
 				Assert.True(_testCase.Validate(parser));
 			}
 		}
@@ -62,9 +69,16 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 		[Fact]
 		public async Task MjpegStreamTest_Async()
 		{
+			var options = new ParserOptions
+			{
+				Boundary = "MOBOTIX_Fast_Serverpush",
+				BinaryBufferSize = 32,
+				Encoding = Encoding.UTF8
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
-				var parser = await MultipartFormDataParser.ParseAsync(stream, "MOBOTIX_Fast_Serverpush", Encoding.UTF8, 32).ConfigureAwait(false);
+				var parser = await MultipartFormDataParser.ParseAsync(stream, options).ConfigureAwait(false);
 				Assert.True(_testCase.Validate(parser));
 			}
 		}

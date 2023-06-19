@@ -35,20 +35,30 @@ namespace HttpMultipartParser.UnitTests.ParserScenarios
 		[Fact]
 		public void DoesntInfiniteLoopOnUnclosedInput()
 		{
+			var options = new ParserOptions
+			{
+				Encoding = Encoding.UTF8
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
 				// We expect this to throw!
-				Assert.Throws<MultipartParseException>(() => MultipartFormDataParser.Parse(stream, Encoding.UTF8));
+				Assert.Throws<MultipartParseException>(() => MultipartFormDataParser.Parse(stream, options));
 			}
 		}
 
 		[Fact]
 		public async Task DoesntInfiniteLoopOnUnclosedInputAsync()
 		{
+			var options = new ParserOptions
+			{
+				Encoding = Encoding.UTF8
+			};
+
 			using (Stream stream = TestUtil.StringToStream(_testCase.Request, Encoding.UTF8))
 			{
 				// We expect this to throw!
-				await Assert.ThrowsAsync<MultipartParseException>(() => MultipartFormDataParser.ParseAsync(stream, Encoding.UTF8)).ConfigureAwait(false);
+				await Assert.ThrowsAsync<MultipartParseException>(() => MultipartFormDataParser.ParseAsync(stream, options)).ConfigureAwait(false);
 			}
 		}
 	}
